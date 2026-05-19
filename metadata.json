@@ -1,0 +1,8 @@
+{
+  "name": "UnlockYourDevice",
+  "description": "Professional mobile and tablet unlocking service. Fast, secure, and trusted solutions for all major brands.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
