@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { Smartphone, Zap, ShieldCheck, ArrowRight, Timer } from 'lucide-react';
+import { Smartphone, Zap, ShieldCheck, ArrowRight, FileText, Download } from 'lucide-react';
+import { generateInvoice } from '../services/invoiceService';
 
 interface UserDashboardProps {
   tokens: string[];
@@ -9,6 +10,16 @@ interface UserDashboardProps {
 }
 
 export default function UserDashboard({ tokens, history, onUseToken, username }: UserDashboardProps) {
+  const handleDownload = (record: any) => {
+    generateInvoice({
+      id: Math.random().toString(36).substr(2, 9).toUpperCase(),
+      customerName: username,
+      device: record.device,
+      price: record.price,
+      date: record.date,
+      time: record.time
+    });
+  };
   return (
     <section className="py-24 bg-slate-900 border-y border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -79,27 +90,40 @@ export default function UserDashboard({ tokens, history, onUseToken, username }:
                         <p className="text-slate-500 text-sm text-center py-4">No history found.</p>
                       ) : (
                         history.map((record, i) => (
-                          <div key={i} className="flex items-start justify-between gap-4 pb-6 border-b border-slate-800 last:border-0 last:pb-0">
-                            <div className="flex items-start gap-3">
-                              <div className="bg-green-500/10 p-2 rounded-lg mt-1 shrink-0">
-                                <ShieldCheck size={18} className="text-green-500" />
+                          <div key={i} className="flex flex-col gap-3 pb-6 border-b border-slate-800 last:border-0 last:pb-0">
+                            <div className="flex items-start justify-between gap-4">
+                              <div className="flex items-start gap-3">
+                                <div className="bg-green-500/10 p-2 rounded-lg mt-1 shrink-0">
+                                  <ShieldCheck size={18} className="text-green-500" />
+                                </div>
+                                <div>
+                                  <h4 className="text-white font-bold text-sm">{record.device}</h4>
+                                  <p className="text-xs text-slate-500">{record.date} • {record.time}</p>
+                                </div>
                               </div>
-                              <div>
-                                <h4 className="text-white font-bold text-sm">{record.device}</h4>
-                                <p className="text-xs text-slate-500">{record.date} • {record.time}</p>
+                              <div className="text-right">
+                                <div className="text-white font-bold text-sm">₹{record.price}</div>
+                                <div className="text-[10px] text-green-500 font-bold uppercase tracking-wider">{record.status}</div>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <div className="text-white font-bold text-sm">₹{record.price}</div>
-                              <div className="text-[10px] text-green-500 font-bold uppercase tracking-wider">{record.status}</div>
-                            </div>
+                            <button 
+                              onClick={() => handleDownload(record)}
+                              className="w-full flex items-center justify-center gap-2 bg-slate-800/50 hover:bg-slate-800 text-slate-400 hover:text-white py-2 rounded-xl text-xs font-bold transition-all border border-slate-700/50"
+                            >
+                              <Download size={14} /> Download Invoice
+                            </button>
                           </div>
                         ))
                       )}
                    </div>
                    {history.length > 0 && (
                      <div className="bg-slate-800/50 p-4 text-center">
-                        <button className="text-xs text-blue-400 font-bold hover:underline py-1">Download All Invoices</button>
+                        <button 
+                          onClick={() => handleDownload(history[0])}
+                          className="text-xs text-blue-400 font-bold hover:underline py-1 flex items-center justify-center gap-2 mx-auto"
+                        >
+                          <FileText size={14} /> View Latest Invoice
+                        </button>
                      </div>
                    )}
                 </div>
